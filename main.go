@@ -30,26 +30,19 @@ type requestParam struct {
 	MusicName  string `json:"musicName"`
 }
 
-type Hoge struct {
-	Val string `json:"val"`
-}
-
-
 func main() {
 	l.Start(handler)
 }
 
-
-
-func handler(params requestParam) (Hoge, error) {
+func handler(params requestParam) (MusicScore, error) {
 	fmt.Println(params)
 	db := connectDb()
 	defer db.Close()
 	name := "%" + params.MusicName + "%"
 	rows, err := db.Query("SELECT * FROM music_scores WHERE instrument = ? AND musicName like ? limit 4", params.Instrument, name)
 	_ = mapping(rows)
-	hoge := Hoge{"hogehoge"}
-	return hoge, err
+	mc := MusicScore{1, "サービスネーム", "曲名", "作曲者", 100, "www","楽器", 1, "簡単", "222",}
+	return mc, err
 }
 
 func connectDb() *sql.DB {
