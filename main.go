@@ -41,7 +41,7 @@ func handler(params requestParam) (MusicScore, error) {
 	name := "%" + params.MusicName + "%"
 	rows, err := db.Query("SELECT * FROM music_scores WHERE instrument = ? AND musicName like ? limit 4", params.Instrument, name)
 	_ = mapping(rows)
-	mc := MusicScore{1, "サービスネーム", "曲名", "作曲者", 100, "www","楽器", 1, "簡単", "222",}
+	mc := MusicScore{1, "サービスネーム", "曲名", "作曲者", 100, "www","楽器", "a", "簡単", "222",}
 	return mc, err
 }
 
