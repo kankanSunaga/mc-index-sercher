@@ -11,7 +11,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type musicScore struct {
+type MusicScore struct {
 	Id			int    `json:"id"`
 	ServiceName string `json:"serviceName"`
 	MusicName   string `json:"musicName"`
@@ -30,26 +30,21 @@ type requestParam struct {
 	MusicName  string `json:"musicName"`
 }
 
-type hoge struct {
-	Str string `json:"str"`
-}
-
 
 func main() {
 	l.Start(handler)
 }
 
 
-func handler(params requestParam) (hoge, error) {
+
+func handler(params requestParam) (MusicScore, error) {
 	fmt.Println(params)
 	db := connectDb()
 	defer db.Close()
 	name := "%" + params.MusicName + "%"
-	rows, err := db.Query("SELECT * FROM music_scores WHERE instrument = ? AND musicName like ? ", params.Instrument, name)
-	_ = mapping(rows)
-
-	hoges := hoge{"hogehoge"}
-	return hoges, err
+	rows, err := db.Query("SELECT * FROM music_scores WHERE instrument = ? AND musicName like ? limit 4", params.Instrument, name)
+	js := mapping(rows)
+	return js, err
 }
 
 func connectDb() *sql.DB {
@@ -66,15 +61,17 @@ func connectDb() *sql.DB {
 	return db
 }
 
-func mapping(rows *sql.Rows) []musicScore {
-	var  musicScores []musicScore
+func mapping(rows *sql.Rows) MusicScore {
+	//var  musicScores []musicScore
+	var mcs MusicScore
 	for rows.Next() {
-		var mc musicScore
+		var mc MusicScore
 		err := rows.Scan(&mc.Id, &mc.ServiceName, &mc.MusicName, &mc.Composer, &mc.Price, &mc.Url, &mc.Instrument, &mc.ServiceId, &mc.Difficulty, &mc.CreatedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-		musicScores = append(musicScores,mc)
+		mcs = mc
+		//musicScores = append(musicScores,mc)
 	}
-	return musicScores
+	return mcs
 }
